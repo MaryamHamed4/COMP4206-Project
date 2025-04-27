@@ -12,13 +12,17 @@ class AddTransactionPage extends StatefulWidget {
 
 class _AddTransactionPageState extends State<AddTransactionPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _amountController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _amountController = TextEditingController();
+
   String _type = 'expense';
   String? _category;
   DateTime _selectedDate = DateTime.now();
   File? _imageFile;
+
   final List<String> _categories = ['Food', 'Transport', 'Salary', 'Rent', 'Other'];
+
+  // ====================== Actions ======================
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -31,13 +35,13 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   }
 
   Future<void> _pickDate() async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
     );
-    if (picked != null && picked != _selectedDate) {
+    if (picked != null) {
       setState(() {
         _selectedDate = picked;
       });
@@ -52,15 +56,100 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         );
         return;
       }
-      Navigator.pushNamed(context, '/summary');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Transaction added succefully ! ')),
+      );
+      Navigator.pushNamed(context, '/');
     }
   }
+
+  // ====================== Widgets ======================
+
+  Widget _buildTitleField() {
+    return TextFormField(
+      controller: _titleController,
+      decoration: const InputDecoration(labelText: 'Title'),
+      validator: (value) => value == null || value.isEmpty ? 'Enter a title' : null,
+    );
+  }
+
+  Widget _buildAmountField() {
+    return TextFormField(
+      controller: _amountController,
+      decoration: const InputDecoration(labelText: 'Amount'),
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        if (value == null || value.isEmpty) return 'Enter an amount';
+        final amount = double.tryParse(value);
+        if (amount == null || amount <= 0) return 'Enter a valid amount';
+        return null;
+      },
+    );
+  }
+
+  Widget _buildTypeSelector() {
+    return Row(
+      children: [
+        Radio<String>(
+          value: 'income',
+          groupValue: _type,
+          onChanged: (value) => setState(() => _type = value!),
+        ),
+        const Text('Income'),
+        Radio<String>(
+          value: 'expense',
+          groupValue: _type,
+          onChanged: (value) => setState(() => _type = value!),
+        ),
+        const Text('Expense'),
+      ],
+    );
+  }
+
+  Widget _buildCategoryDropdown() {
+    return DropdownButtonFormField<String>(
+      value: _category,
+      hint: const Text('Select Category'),
+      items: _categories.map((category) => DropdownMenuItem(value: category, child: Text(category))).toList(),
+      onChanged: (value) => setState(() => _category = value),
+      validator: (value) => value == null ? 'Please choose a category' : null,
+    );
+  }
+
+  Widget _buildDatePicker() {
+    return Row(
+      children: [
+        Text('Date: ${DateFormat.yMd().format(_selectedDate)}'),
+        IconButton(
+          icon: const Icon(Icons.calendar_today),
+          onPressed: _pickDate,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImagePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _imageFile != null
+            ? Image.file(_imageFile!, height: 100)
+            : const Text('No image selected.'),
+        ElevatedButton(
+          onPressed: _pickImage,
+          child: const Text('Upload Receipt'),
+        ),
+      ],
+    );
+  }
+
+  // ====================== Build ======================
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Transaction'),
+      appBar: AppBar(title: const Text('Add Transaction'),
+        backgroundColor: Colors.green.shade200,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -70,71 +159,17 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextFormField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(labelText: 'Title'),
-                  validator: (value) => value == null || value.isEmpty ? 'Enter a title' : null,
-                ),
-                TextFormField(
-                  controller: _amountController,
-                  decoration: const InputDecoration(labelText: 'Amount'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return 'Enter an amount';
-                    final amount = double.tryParse(value);
-                    if (amount == null || amount <= 0) return 'Enter a valid amount';
-                    return null;
-                  },
-                ),
+                _buildTitleField(),
+                _buildAmountField(),
                 const SizedBox(height: 16),
                 const Text('Type:'),
-                Row(
-                  children: [
-                    Radio(
-                      value: 'income',
-                      groupValue: _type,
-                      onChanged: (value) => setState(() => _type = value!),
-                    ),
-                    const Text('Income'),
-                    Radio(
-                      value: 'expense',
-                      groupValue: _type,
-                      onChanged: (value) => setState(() => _type = value!),
-                    ),
-                    const Text('Expense'),
-                  ],
-                ),
+                _buildTypeSelector(),
                 const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: _category,
-                  hint: const Text('Select Category'),
-                  items: _categories.map((String category) {
-                    return DropdownMenuItem<String>(
-                      value: category,
-                      child: Text(category),
-                    );
-                  }).toList(),
-                  onChanged: (value) => setState(() => _category = value),
-                  validator: (value) => value == null ? 'Please choose a category' : null,
-                ),
+                _buildCategoryDropdown(),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Text('Date: ${DateFormat.yMd().format(_selectedDate)}'),
-                    IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: _pickDate,
-                    ),
-                  ],
-                ),
+                _buildDatePicker(),
                 const SizedBox(height: 16),
-                _imageFile != null
-                    ? Image.file(_imageFile!, height: 100)
-                    : const Text('No image selected.'),
-                ElevatedButton(
-                  onPressed: _pickImage,
-                  child: const Text('Upload Receipt'),
-                ),
+                _buildImagePicker(),
                 const SizedBox(height: 24),
                 Center(
                   child: ElevatedButton(
@@ -147,6 +182,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           ),
         ),
       ),
+      bottomNavigationBar: NavBar(currentIndex: 1),
     );
   }
 }
