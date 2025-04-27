@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:templatemidterm/widgets/nav_bar.dart';
 
 class BudgetPage extends StatefulWidget {
   const BudgetPage({super.key});
@@ -80,11 +81,14 @@ class _BudgetPageState extends State<BudgetPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Budget Overview')),
+      appBar: AppBar(title: const Text('Budget Overview'),
+        backgroundColor: Colors.green.shade200,),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: _budgets.keys.map(_buildBudgetCard).toList(),
       ),
+      backgroundColor: Colors.green.shade100,
+      bottomNavigationBar: NavBar(currentIndex: 2),
     );
   }
 }
