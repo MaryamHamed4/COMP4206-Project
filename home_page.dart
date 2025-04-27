@@ -15,8 +15,8 @@ class _MyHomePageState extends State<MyHomePage> {
     'Add Transaction',
     'Budget Overview',
     'Reports',
-    'Summary',
-    'Settings'
+    'Financial Plan Generator',
+    'Settings',
   ];
 
   String _selectedScreen = 'Add Transaction';
@@ -32,11 +32,11 @@ class _MyHomePageState extends State<MyHomePage> {
       case 'Reports':
         Navigator.pushNamed(context, '/reports');
         break;
-      case 'Summary':
-        Navigator.pushNamed(context, '/summary');
-        break;
       case 'Settings':
         Navigator.pushNamed(context, '/settings');
+        break;
+      case 'Financial Plan Generator':
+        Navigator.pushNamed(context, '/plan');
         break;
     }
   }
@@ -152,26 +152,28 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
               const SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pushNamed(context, '/summary'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children:[
+                  ElevatedButton.icon(
+                    onPressed: () => Navigator.pushNamed(context, '/plan'),
+                    icon: Icon(Icons.plagiarism_outlined),
+                    label: const Text("Generate Financial Plan"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                   ),
-                  child: Text(
-                    "Generate Financial Plan",
-                    style: GoogleFonts.poppins(fontSize: 16),
-                  ),
-                ),
+                ]
               )
             ],
           ),
         ),
       ),
+      bottomNavigationBar: NavBar(currentIndex: 0),
     );
   }
 
