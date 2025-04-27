@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:templatemidterm/widgets/nav_bar.dart';
 
 class ReportsPage extends StatelessWidget {
   const ReportsPage({super.key});
@@ -9,7 +10,8 @@ class ReportsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reports')),
+      appBar: AppBar(title: const Text('Reports'),
+        backgroundColor: Colors.green.shade200,),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -22,6 +24,7 @@ class ReportsPage extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: NavBar(currentIndex: 3),
     );
   }
 }
