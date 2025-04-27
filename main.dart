@@ -4,7 +4,7 @@ import 'pages/add_transaction_page.dart';
 import 'pages/reports_page.dart';
 import 'pages/budget_page.dart';
 import 'pages/settings_page.dart';
-import 'pages/summary_page.dart';
+import 'pages/financial_plan_form.dart';
 
 void main() => runApp(const MyApp());
 
@@ -20,14 +20,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/', // will lead to home page
+      // routes between different pages
       routes: {
         '/': (context) => const MyHomePage(title: 'Home Page'),
         '/add': (context) => const AddTransactionPage(),
         '/budget': (context) => const BudgetPage(),
         '/reports': (context) => const ReportsPage(),
         '/settings': (context) => const SettingsPage(),
-        '/summary': (context) => const SummaryPage(),
+        '/plan': (context) => const FinancialPlanFormPage(),
       },
     );
   }
