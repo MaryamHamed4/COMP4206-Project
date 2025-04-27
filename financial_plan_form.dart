@@ -3,7 +3,25 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+// Dummy NavBar widget
+class NavBar extends StatelessWidget {
+  final int currentIndex;
+  const NavBar({required this.currentIndex});
 
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: currentIndex,
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.business), label: 'Business'),
+        BottomNavigationBarItem(icon: Icon(Icons.school), label: 'School'),
+        BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+        BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Financial Plan'),
+      ],
+    );
+  }
+}
 
 class FinancialPlanFormPage extends StatefulWidget {
   const FinancialPlanFormPage({super.key});
@@ -11,26 +29,19 @@ class FinancialPlanFormPage extends StatefulWidget {
   @override
   State<FinancialPlanFormPage> createState() => _FinancialPlanFormPageState();
 }
-//-------------------------------Class beginning--------------------------------
-class _FinancialPlanFormPageState extends State<FinancialPlanFormPage> {
 
-  //------------------------initializing and variables--------------------------
-  // vars that have a value already
+class _FinancialPlanFormPageState extends State<FinancialPlanFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _incomeController = TextEditingController();
   final _goalsController = TextEditingController();
 
-  //****************************
-  // vars that will/might change
   String? _selectedSavingGoal;
   bool _agreeTerms = false;
   File? _selectedFile;
   DateTime? _selectedDate;
 
-  //****************************
-  // vars that are essential for the stepper
   int _stepNum = 0;
   bool _complete = false;
 
@@ -41,8 +52,6 @@ class _FinancialPlanFormPageState extends State<FinancialPlanFormPage> {
     'Education'
   ];
 
-  //------------------------------Functions-------------------------------------
-  // image uploading function
   Future<void> _pickFile() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -52,8 +61,6 @@ class _FinancialPlanFormPageState extends State<FinancialPlanFormPage> {
     }
   }
 
-  //***************************************
-  //date picking function
   Future<void> _pickDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -68,60 +75,68 @@ class _FinancialPlanFormPageState extends State<FinancialPlanFormPage> {
     }
   }
 
-  //***********************************
-  // final validating and submitting
   void _submitForm() {
-    if (_formKey.currentState!.validate() && _agreeTerms && _selectedFile != null) {
-
-      Navigator.pushNamed(context, '/financialPlanSummary', arguments: {
-        'email': _emailController.text,
-        'income': _incomeController.text,
-        'goal': _selectedSavingGoal,
-        'planDetails': _goalsController.text,
-        'date': _selectedDate.toString(),
-      });
-    } else {
-      if (!_agreeTerms) {
-        showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Error'),
-            content: const Text('You must agree to the terms and conditions.'),
-            actions: [
-              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK')),
-            ],
-          ),
-        );
-      }
-      if (_selectedFile == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please upload a profile image.')),
-        );
-      }
-    }
+    Navigator.pushNamed(context, '/financialPlanSummary', arguments: {
+      'email': _emailController.text,
+      'income': _incomeController.text,
+      'goal': _selectedSavingGoal,
+      'planDetails': _goalsController.text,
+      'date': _selectedDate.toString(),
+    });
   }
 
-  //***************************************
-  // next steps function
   void _onStepContinue() {
-    if (_stepNum < _steps.length - 1) {
-      setState(() => _stepNum += 1);
-    } else {
-      setState(() => _complete = true);
-      _submitForm();
+    if (_stepNum == 0) {
+      if (_formKey.currentState!.validate()) {
+        setState(() => _stepNum += 1);
+      }
+    } else if (_stepNum == 1) {
+      if (_formKey.currentState!.validate() && _selectedSavingGoal != null) {
+        setState(() => _stepNum += 1);
+      } else {
+        if (_selectedSavingGoal == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a saving goal')),
+          );
+        }
+      }
+    } else if (_stepNum == 2) {
+      if (_agreeTerms && _selectedFile != null && _selectedDate != null) {
+        setState(() => _complete = true);
+        _submitForm();
+      } else {
+        if (!_agreeTerms) {
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Error'),
+              content: const Text('You must agree to the terms and conditions.'),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK')),
+              ],
+            ),
+          );
+        }
+        if (_selectedFile == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please upload a profile image.')),
+          );
+        }
+        if (_selectedDate == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a target date.')),
+          );
+        }
+      }
     }
   }
 
-  //*************************************
-  // canceling a step function
   void _onStepCancel() {
     if (_stepNum > 0) {
       setState(() => _stepNum -= 1);
     }
   }
 
-  //*************************************
-  // list of steps
   List<Step> get _steps => [
     Step(
       title: const Text('Personal Details'),
@@ -231,13 +246,10 @@ class _FinancialPlanFormPageState extends State<FinancialPlanFormPage> {
     ),
   ];
 
-  //--------------------------------------------------------------------
-  // refactoring the success screen into a widget
   Widget _buildSuccess() {
-    // Show the SnackBar when this widget builds
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('The financial plan in email')),
+        const SnackBar(content: Text('The financial plan is sent in email!')),
       );
     });
 
@@ -258,8 +270,6 @@ class _FinancialPlanFormPageState extends State<FinancialPlanFormPage> {
     );
   }
 
-
-  //------------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -275,7 +285,7 @@ class _FinancialPlanFormPageState extends State<FinancialPlanFormPage> {
         onStepCancel: _onStepCancel,
         steps: _steps,
       ),
-      bottomNavigationBar: NavBar(currentIndex: 4 ),
+      bottomNavigationBar: const NavBar(currentIndex: 4),
     );
   }
 }
