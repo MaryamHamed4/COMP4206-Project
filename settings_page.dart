@@ -1,83 +1,98 @@
 import 'package:flutter/material.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:templatemidterm/widgets/nav_bar.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+class ReportsPage extends StatelessWidget {
+  const ReportsPage({super.key});
 
-  @override
-  State<SettingsPage> createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends State<SettingsPage> {
-  bool _darkMode = false;
-  String _currency = 'OMR';
-  final List<String> _currencies = ['OMR', 'USD', 'EUR'];
-  final LocalAuthentication _auth = LocalAuthentication();
-  bool _biometricEnabled = false;
-
-  final Color _primaryColor = Colors.teal;
-  final TextStyle _labelStyle = GoogleFonts.poppins(fontSize: 16);
-
-  Future<void> _authenticate() async {
-    try {
-      bool canCheck = await _auth.canCheckBiometrics;
-      if (canCheck) {
-        bool authenticated = await _auth.authenticate(
-          localizedReason: 'Enable biometric security',
-          options: const AuthenticationOptions(biometricOnly: true),
-        );
-        setState(() => _biometricEnabled = authenticated);
-      }
-    } catch (e) {
-      print("Biometric error: $e");
-    }
-  }
-
-  Widget _buildSwitchTile(String title, bool value, Function(bool) onChanged) {
-    return SwitchListTile(
-      title: Text(title, style: _labelStyle),
-      value: value,
-      onChanged: onChanged,
-    );
-  }
-
-  Widget _buildDropdownField() {
-    return DropdownButtonFormField<String>(
-      value: _currency,
-      decoration: InputDecoration(labelText: "Currency", labelStyle: _labelStyle),
-      items: _currencies.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
-      onChanged: (val) => setState(() => _currency = val!),
-    );
-  }
-
-  Widget _buildBiometricButton() {
-    return ElevatedButton.icon(
-      onPressed: _authenticate,
-      icon: Icon(_biometricEnabled ? Icons.lock_open : Icons.fingerprint),
-      label: Text(_biometricEnabled ? "Biometric Enabled" : "Enable Biometric"),
-      style: ElevatedButton.styleFrom(backgroundColor: _primaryColor),
-    );
-  }
+  static const TextStyle sectionTitleStyle = TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Settings", style: GoogleFonts.poppins()),
-        backgroundColor: _primaryColor,
+      appBar: AppBar(title: const Text('Reports'),
+        backgroundColor: Colors.green.shade200,),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Text('Spending by Category', style: sectionTitleStyle),
+            const SizedBox(height: 200, child: PieChartWidget()),
+            const SizedBox(height: 24),
+            const Text('Income vs Expenses', style: sectionTitleStyle),
+            const SizedBox(height: 200, child: BarChartWidget()),
+          ],
+        ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _buildSwitchTile("Dark Mode", _darkMode, (value) {
-            setState(() => _darkMode = value);
-            // Optional: Apply dark mode globally with Provider or Theme
-          }),
-          _buildDropdownField(),
-          const SizedBox(height: 20),
-          _buildBiometricButton(),
-        ],
+      bottomNavigationBar: NavBar(currentIndex: 3),
+    );
+  }
+}
+
+class PieChartWidget extends StatelessWidget {
+  const PieChartWidget({super.key});
+
+  List<PieChartSectionData> _buildPieSections() {
+    return [
+      PieChartSectionData(value: 40, color: Colors.red, title: 'Food'),
+      PieChartSectionData(value: 25, color: Colors.blue, title: 'Transport'),
+      PieChartSectionData(value: 20, color: Colors.orange, title: 'Entertainment'),
+      PieChartSectionData(value: 15, color: Colors.green, title: 'Utilities'),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PieChart(
+      PieChartData(
+        sections: _buildPieSections(),
+        sectionsSpace: 4,
+        centerSpaceRadius: 30,
+      ),
+    );
+  }
+}
+
+class BarChartWidget extends StatelessWidget {
+  const BarChartWidget({super.key});
+
+  List<BarChartGroupData> _buildBarGroups() {
+    return [
+      BarChartGroupData(x: 1, barRods: [
+        BarChartRodData(toY: 2000, color: Colors.green),
+      ], showingTooltipIndicators: [0]),
+      BarChartGroupData(x: 2, barRods: [
+        BarChartRodData(toY: 850, color: Colors.red),
+      ], showingTooltipIndicators: [0]),
+    ];
+  }
+
+  Widget _buildBottomTitles(double value, TitleMeta meta) {
+    switch (value.toInt()) {
+      case 1:
+        return const Text('Income');
+      case 2:
+        return const Text('Expenses');
+      default:
+        return const Text('');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BarChart(
+      BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        maxY: 2500,
+        barGroups: _buildBarGroups(),
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: _buildBottomTitles,
+            ),
+          ),
+        ),
       ),
     );
   }
