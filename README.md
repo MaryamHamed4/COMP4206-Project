@@ -33,9 +33,7 @@ lib/
 │    ├── settings_page.dart
 │    └── summary_page.dart
 ├── widgets/
-│    ├── transaction_tile.dart
-│    ├── stat_card.dart
-│    └── custom_buttons.dart
+│    └── nav_bar.dart
 ├── main.dart
 assets/
 └── images/
