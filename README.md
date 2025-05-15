@@ -1,80 +1,147 @@
-🦖 Spendasaurus: Smart Budget Tracker
+ 🦖 Spendasaurus: Smart Budget Tracker
 
-📋 Project Overview
-Spendasaurus is a smart and fun budget tracking mobile application built with Flutter. It helps users manage their income and expenses, set monthly budgets, visualize financial trends, and secure their data with biometric authentication. The app is designed to provide an intuitive, simple, and enjoyable experience for managing personal finances.
+## 📋 Project Overview
 
-🎯 Main Features
-✅ Add and manage income and expense transactions.
-✅ Set budgets for different spending categories with dynamic progress tracking.
-✅ Visualize spending and earning trends with Pie Charts and Bar Charts.
-✅ Upload photos or receipts with transactions.
-✅ Customize app preferences (currency selection, dark mode).
-✅ Enable biometric security using fingerprint or face authentication.
+**Spendasaurus** is a smart, engaging mobile application built with **Flutter** for tracking personal finances. It empowers users to record their income and expenses, set budgets, generate financial plans, and view financial insights through interactive charts—all with secure access via Firebase authentication and biometric security.
 
-🛠️ Technologies Used
-  1. Flutter & Dart
-  2. Google Fonts (google_fonts)
-  3. Image Picker (image_picker)
-  4. FL Chart (fl_chart)
-  5. Local Authentication (local_auth)
+This app was developed as a final course project for **COMP4206: Mobile Applications Development (Spring 2025)** at **Sultan Qaboos University**, showcasing advanced Flutter features, cloud integration, UI/UX design, and production-readiness through full deployment on a physical Android device.
 
-🏗️ Project Structure
+---
 
+## 🎯 Key Features
+
+✅ **Firebase Authentication** for secure login/registration
+✅ **Add, view, update, and delete** income/expense transactions
+✅ **Set and track budgets** per category with visual progress
+✅ **Generate financial plans** using a multi-step form with validations
+✅ **Real-time reports** via Pie and Bar Charts (using `fl_chart`)
+✅ **TabBar, Bottom Navigation, and Drawer** for seamless navigation
+✅ **Upload receipts/images** with transactions (image\_picker)
+✅ **Search/filter functionality** to find transactions quickly
+✅ **Dark mode and currency selection** in app preferences
+✅ **Biometric authentication** for enhanced app security
+✅ **Snackbars and modals** for user feedback on actions
+
+---
+
+## 🛠️ Technologies Used
+
+* **Flutter & Dart**
+* **Firebase Firestore & Authentication**
+* `fl_chart` (data visualization)
+* `image_picker` (photo upload)
+* `google_fonts` (custom fonts)
+* `local_auth` (biometrics)
+
+---
+
+## 🧱 Project Structure
+
+```
 lib/
 ├── models/
-│    ├── budget.dart
-│    ├── transaction.dart
-│    └── user.dart
+│   ├── budget.dart
+│   ├── transaction.dart
+│   └── user.dart
 ├── pages/
-│    ├── home_page.dart
-│    ├── add_transaction_page.dart
-│    ├── budget_page.dart
-│    ├── reports_page.dart
-│    ├── settings_page.dart
-│    └── summary_page.dart
+│   ├── home_page.dart
+│   ├── add_transaction_page.dart
+│   ├── budget_page.dart
+│   ├── reports_page.dart
+│   ├── settings_page.dart
+│   ├── login_page.dart
+│   └── financial_plan_page.dart
 ├── widgets/
-│    └── nav_bar.dart
+│   ├── nav_bar.dart
+│   └── common_widgets.dart
 ├── main.dart
 assets/
 └── images/
     └── logoMod.jpg
+```
 
-    
-🚀 How to Run the Project
+---
+
+## 🚀 How to Run the Project
+
 1. Clone the repository:
+
+```bash
 git clone https://github.com/YourGitHubUsername/spendasaurus.git
+```
 
-2. Navigate into the project directory:
+2. Navigate to the project folder:
+
+```bash
 cd spendasaurus
+```
 
-3. Install the dependencies:
+3. Install dependencies:
+
+```bash
 flutter pub get
+```
 
-4. Run the app on an emulator or a real device:
+4. Run the app:
+
+```bash
 flutter run
+```
 
-✅ Make sure your emulator/device allows permissions for camera, storage, and biometrics for full app functionality.
+✅ Ensure your emulator/device allows access to **camera, storage, and biometrics**.
 
-👩‍💻 Team Members
+---
 
-Name	                Student ID
-Maryam Al'Obeidani	   137875
-Al-Zahraa Al Abri	     136364
+## 📊 Firebase Collections
 
-📈 Contribution Summary
+* `users`: email, createdAt
+* `transactions`: title, amount, category, createdAt, userId
+* `budgets`: category, limit, month, userId
 
-Team Member	Contributions
-Maryam Al’Obeidani:	Home Page, Add Transaction Screen, Summary Page, Budget Page, Reports Page, Settings Page
-Al-Zahraa Al Abri	Home Page, Add Transaction Screen, Summary Page, Budget Page, Reports Page, Settings Page
+Each supports full **CRUD operations**, with **search/filter** and **user-specific access**.
 
-📂 GitHub Collaboration
-Version control using branches and commits.
-Each team member contributed separately and merged changes collaboratively.
-Clear commit history reflecting individual work.
+---
 
-🎥 Demo Video
-[🔗video]
+## 👥 Team Members
 
-✅ Important
-This project is a course assignment for COMP4206: Mobile Applications Development (Spring 2025) at Sultan Qaboos University.
-It demonstrates Flutter application development, UI/UX design, form validation, data management, biometric security, and code refactoring techniques.
+| Name               | Student ID |
+| ------------------ | ---------- |
+| Maryam Al’Obeidani | 137875     |
+| Al-Zahraa Al Abri  | 136364     |
+
+Both members collaborated on all major components including UI design, Firebase integration, CRUD operations, authentication, charts, and deployment.
+
+---
+
+## 📈 Contribution Summary
+
+| Team Member        | Responsibilities                                                         |
+| ------------------ | ------------------------------------------------------------------------ |
+| Maryam Al’Obeidani | All pages: Home, Transactions, Budget, Reports, Financial Plan, Settings |
+| Al-Zahraa Al Abri  | All pages: Home, Transactions, Budget, Reports, Financial Plan, Settings |
+
+---
+
+## 📂 GitHub & Version Control
+
+* Public repository with clean folder structure
+* Version control via Git branches and commits
+* All contributions properly documented in commit history
+
+---
+
+## 🎥 Demo Video
+(Video demonstrates login, Firebase usage, CRUD operations, UI components, and biometric security)
+
+---
+
+## ✅ Course Note
+
+This project was completed as part of **COMP4206: Mobile Applications Development**. It demonstrates:
+
+* Firebase integration and authentication
+* State management and navigation
+* Layered UI with Stack, TabBar, Drawer
+* Search, filtering, and chart visualizations
+* Full deployment on a real Android device
+
